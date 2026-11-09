@@ -51,13 +51,13 @@ def login():
         username = request.form.get('username')
         password = request.form.get('password')
         
-        # เงื่อนไขที่ 1: ถ้าเป็นแอดมิน (admin / admin) แยกสิทธิ์ไปหน้าแอดมินหรือแดชบอร์ดแอดมิน
+        # 1. เช็กสิทธิ์แอดมินก่อนเป็นอันดับแรกสุด
         if username == 'admin' and password == 'admin':
             session['user'] = 'admin'
             session['role'] = 'admin'
             return redirect(url_for('dashboard'))
         
-        # เงื่อนไขที่ 2: ผู้ใช้ทั่วไป พิมพ์อะไรก็ได้ (ที่ไม่ว่างเปล่า) ยอมให้เข้าสู่ระบบทั้งหมด
+        # 2. ถ้าไม่ใช่แอดมิน แต่มีการกรอกข้อมูลมา ให้เป็น User ทั่วไป (พิมพ์อะไรก็ได้)
         elif username and password:
             session['user'] = username
             session['role'] = 'user'
@@ -79,7 +79,6 @@ def dashboard():
     except Exception:
         devices = []
         
-    # ส่งตัวแปร role ไปเช็กหน้าเว็บได้ว่าใครคือ admin ใครคือ user ทั่วไป
     return render_template('dashboard.html', devices=devices, role=session.get('role'))
 
 @app.route('/repair', methods=['GET', 'POST'])
