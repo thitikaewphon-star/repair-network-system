@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>CYBER COMMAND CENTER v4.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background-color: #030712; color: #ffffff; font-family: 'Prompt', sans-serif; min-height: 100vh; }
+        .navbar { background: rgba(15, 23, 42, 0.9); border-bottom: 1px solid rgba(56, 189, 248, 0.4); }
+        .navbar-brand { font-family: 'Orbitron', sans-serif; color: #38bdf8 !important; font-weight: 700; }
+        .btn-logout { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.5); color: #ef4444; font-family: 'Orbitron', sans-serif; font-weight: 600; padding: 6px 16px; border-radius: 8px; text-decoration: none; }
+        .btn-logout:hover { background: rgba(239, 68, 68, 0.3); color: #fff; }
+        .system-status-bar { background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 12px; padding: 10px 20px; font-family: 'Orbitron', sans-serif; font-size: 0.85rem; }
+        .hub-card { background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 20px; padding: 40px 30px; text-align: center; transition: 0.4s; }
+        .hub-card:hover { transform: translateY(-8px); border-color: #38bdf8; box-shadow: 0 0 45px rgba(56, 189, 248, 0.4); }
+        .hub-icon { font-size: 3.5rem; color: #38bdf8; margin-bottom: 20px; }
+        .btn-cyber-access { background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%); border: none; color: white; font-weight: 600; padding: 12px 25px; border-radius: 12px; font-family: 'Prompt', sans-serif; font-size: 1rem; width: 100%; transition: 0.3s; }
+        .btn-cyber-access:hover { background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%); color: white; box-shadow: 0 0 25px rgba(0, 242, 254, 0.8); }
+        .pulse-dot { height: 10px; width: 10px; background-color: #22c55e; border-radius: 50%; display: inline-block; box-shadow: 0 0 10px #22c55e; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-dark px-4 py-3">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><i class="fa-solid fa-shield-halved me-2"></i> CYBER COMMAND SYSTEM v4.0</a>
+            <div class="d-flex align-items-center gap-3">
+                <span class="text-info font-monospace" style="font-family: 'Orbitron', sans-serif; font-size: 0.85rem;">
+                    <i class="fa-solid fa-user-shield me-1"></i> USER: <span class="text-white">{{ username }}</span>
+                </span>
+                <a href="/logout" class="btn-logout"><i class="fa-solid fa-power-off me-1"></i> LOGOUT</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-5">
+        <div class="system-status-bar mb-5">
+            <div class="row align-items-center text-center text-md-start">
+                <div class="col-md-4 mb-2 mb-md-0"><span class="pulse-dot me-2"></span>SYSTEM STATUS: <span class="text-success fw-bold">SECURE & ONLINE</span></div>
+                <div class="col-md-4 mb-2 mb-md-0 text-md-center">CORE LOAD: <span class="text-warning fw-bold" id="coreLoad">23.7%</span></div>
+                <div class="col-md-4 text-md-end">ENCRYPTION: <span class="text-info fw-bold">AES-256-BIT</span></div>
+            </div>
+        </div>
+
+        <div class="text-center mb-5">
+            <h1 class="fw-bold text-white mb-2" style="font-family: 'Orbitron', sans-serif; text-shadow: 0 0 20px rgba(56, 189, 248, 0.6);">CENTRAL OPERATIONS HUB</h1>
+            <p class="text-white-50">เลือกโมดูลระบบย่อยเพื่อปฏิบัติการควบคุมโครงข่ายและศูนย์ซ่อมบำรุง</p>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+            <div class="col-lg-5">
+                <div class="hub-card h-100 d-flex flex-column justify-content-between">
+                    <div>
+                        <div class="hub-icon"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+                        <h3 class="text-white mb-3" style="font-family: 'Orbitron', sans-serif;">EQUIPMENT REPAIR</h3>
+                        <p class="text-white-50 mb-4">ระบบควบคุมการแจ้งซ่อมครุภัณฑ์ ตรวจสอบสถานะฮาร์ดแวร์ และส่งสัญญาณแจ้งเตือนไปยังผู้ใช้งาน</p>
+                    </div>
+                    <div><a href="/repair" class="btn btn-cyber-access"><i class="fa-solid fa-screwdriver-wrench me-2"></i> เข้าสู่ระบบแจ้งซ่อม</a></div>
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="hub-card h-100 d-flex flex-column justify-content-between">
+                    <div>
+                        <div class="hub-icon text-info"><i class="fa-solid fa-globe"></i></div>
+                        <h3 class="text-white mb-3" style="font-family: 'Orbitron', sans-serif;">NETWORK MONITOR</h3>
+                        <p class="text-white-50 mb-4">ระบบสแกนโครงข่ายอินเตอร์เน็ต ตรวจสอบเกตเวย์ ไฟร์วอลล์ และความเร็วแบนด์วิดธ์แบบเรียลไทม์</p>
+                    </div>
+                    <div><a href="/network" class="btn btn-cyber-access"><i class="fa-solid fa-network-wired me-2"></i> เข้าสู่ระบบเน็ตเวิร์ก</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        setInterval(() => {
+            const randomLoad = (20 + Math.random() * 15).toFixed(1);
+            document.getElementById("coreLoad").textContent = randomLoad + "%";
+        }, 3000);
+    </script>
+</body>
+</html>

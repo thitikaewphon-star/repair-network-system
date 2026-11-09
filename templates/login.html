@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CYBER COMMAND SYSTEM - LOGIN</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { 
+            background-color: #030712; 
+            color: #ffffff; 
+            font-family: 'Prompt', sans-serif; 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column;
+            align-items: center; 
+            justify-content: center; 
+            overflow: hidden; 
+            position: relative; 
+        }
+
+        body::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 1;
+            background-size: 100% 4px, 6px 100%;
+            pointer-events: none;
+        }
+
+        .night { position: fixed; width: 100%; height: 100%; transform: rotateZ(45deg); top: 0; left: 0; pointer-events: none; z-index: 0; }
+        .shooting-star { position: absolute; height: 2px; background: linear-gradient(-45deg, rgba(56, 189, 248, 1), rgba(0, 0, 255, 0)); border-radius: 999px; animation: tail 3s ease-in-out infinite, falling 3s ease-in-out infinite; }
+        @keyframes tail { 0% { width: 0px; } 30% { width: 150px; } 100% { width: 0px; } }
+        @keyframes falling { 0% { transform: translateX(0); } 100% { transform: translateX(1200px); } }
+        .shooting-star:nth-child(1) { top: 20%; left: -10%; animation-delay: 0.2s; }
+        .shooting-star:nth-child(2) { top: 50%; left: -20%; animation-delay: 1.2s; }
+        .shooting-star:nth-child(3) { top: 80%; left: -5%; animation-delay: 2.1s; }
+
+        .system-header {
+            position: absolute;
+            top: 40px;
+            text-align: center;
+            z-index: 10;
+            width: 100%;
+            padding: 0 20px;
+        }
+
+        .system-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: #ffffff;
+            text-shadow: 0 0 20px rgba(56, 189, 248, 0.7), 0 0 40px rgba(56, 189, 248, 0.4);
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+
+        .system-subtitle {
+            font-size: 0.95rem;
+            color: #ffffff;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .login-card { 
+            background: rgba(15, 23, 42, 0.85); 
+            border: 1px solid rgba(56, 189, 248, 0.4); 
+            padding: 35px; 
+            border-radius: 20px; 
+            width: 100%;
+            max-width: 400px; 
+            box-shadow: 0 0 40px rgba(56, 189, 248, 0.25), inset 0 0 15px rgba(56, 189, 248, 0.1); 
+            backdrop-filter: blur(15px);
+            position: relative; 
+            z-index: 10; 
+            transition: 0.3s;
+        }
+        
+        .login-card:hover {
+            box-shadow: 0 0 50px rgba(56, 189, 248, 0.4);
+            border-color: #00f2fe;
+        }
+
+        .form-label {
+            color: #ffffff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .form-control { 
+            background: rgba(30, 41, 59, 0.95) !important; 
+            border: 1px solid #38bdf8 !important; 
+            color: #ffffff !important; 
+            font-weight: 600;
+            border-radius: 12px;
+            padding: 12px;
+            font-size: 1.05rem;
+        }
+
+        .form-control::placeholder {
+            color: #cbd5e1 !important;
+            opacity: 1;
+        }
+        
+        .form-control:focus { 
+            border-color: #00f2fe !important; 
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.8) !important; 
+            color: #ffffff !important;
+        }
+
+        .btn-cyber { 
+            background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%); 
+            border: none; 
+            color: white; 
+            font-weight: 700; 
+            padding: 12px; 
+            border-radius: 12px; 
+            font-family: 'Prompt', sans-serif; 
+            font-size: 1rem;
+            letter-spacing: 1px;
+            transition: 0.3s;
+            box-shadow: 0 0 15px rgba(0, 114, 255, 0.4);
+        }
+
+        .btn-cyber:hover { 
+            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%); 
+            color: white; 
+            box-shadow: 0 0 25px rgba(0, 242, 254, 0.8); 
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="night">
+        <div class="shooting-star"></div>
+        <div class="shooting-star"></div>
+        <div class="shooting-star"></div>
+    </div>
+
+    <div class="system-header">
+        <h1 class="system-title"><i class="fa-solid fa-shield-halved me-2"></i>CYBER COMMAND CENTER</h1>
+        <div class="system-subtitle">ระบบควบคุมโครงข่ายอินเตอร์เน็ตและศูนย์ซ่อมบำรุงวิทยาลัย</div>
+    </div>
+
+    <div class="login-card">
+        <div class="text-center mb-4">
+            <h4 class="fw-bold text-white mb-1" style="font-family: 'Orbitron', sans-serif;">SECURE LOGIN</h4>
+            <p class="text-white small mb-0">กรุณาระบุชื่อผู้ใช้งานเพื่อเข้าสู่ระบบ</p>
+        </div>
+
+        {% if error %}
+        <div class="alert alert-danger py-2 text-center mb-3" style="font-size: 0.85rem; background: rgba(239,68,68,0.2); border-color: rgba(239,68,68,0.4); color: #ffffff;">
+            <i class="fa-solid fa-triangle-exclamation me-1"></i> {{ error }}
+        </div>
+        {% endif %}
+
+        <form method="POST">
+            <div class="mb-3">
+                <label class="form-label">USERNAME</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-dark border-secondary text-info"><i class="fa-solid fa-user-shield"></i></span>
+                    <input type="text" name="username" class="form-control" required placeholder="พิมพ์ชื่อผู้ใช้..." autocomplete="off">
+                </div>
+            </div>
+            <div class="mb-4">
+                <label class="form-label">PASSWORD</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-dark border-secondary text-info"><i class="fa-solid fa-key"></i></span>
+                    <input type="password" name="password" class="form-control" placeholder="รหัสผ่านอะไรก็ได้..." autocomplete="off">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-cyber w-100 py-2">
+                <i class="fa-solid fa-right-to-bracket me-2"></i> เข้าสู่ระบบ
+            </button>
+        </form>
+    </div>
+</body>
+</html>

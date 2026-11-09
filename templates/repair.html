@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Repair Management System - Cyberpunk Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body { background-color: #030712; color: #ffffff; font-family: 'Prompt', sans-serif; min-height: 100vh; overflow-x: hidden; position: relative; }
+        .night { position: fixed; width: 100%; height: 100%; transform: rotateZ(45deg); top: 0; left: 0; pointer-events: none; z-index: 1; }
+        .shooting-star { position: absolute; height: 2px; background: linear-gradient(-45deg, rgba(56, 189, 248, 1), rgba(0, 0, 255, 0)); border-radius: 999px; animation: tail 3s ease-in-out infinite, falling 3s ease-in-out infinite; }
+        @keyframes tail { 0% { width: 0px; } 30% { width: 100px; } 100% { width: 0px; } }
+        @keyframes falling { 0% { transform: translateX(0); } 100% { transform: translateX(1000px); } }
+        .shooting-star:nth-child(1) { top: 10%; left: 10%; animation-delay: 0.2s; }
+
+        .navbar { background: rgba(15, 23, 42, 0.85); border-bottom: 1px solid rgba(56, 189, 248, 0.3); backdrop-filter: blur(15px); position: relative; z-index: 10; }
+        .navbar-brand { font-family: 'Orbitron', sans-serif; color: #38bdf8 !important; font-weight: 700; text-shadow: 0 0 10px rgba(56, 189, 248, 0.5); }
+        .btn-back { background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(56, 189, 248, 0.5); color: #38bdf8; font-weight: 600; padding: 8px 16px; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; }
+        .btn-back:hover { background: rgba(56, 189, 248, 0.2); color: #fff; box-shadow: 0 0 15px rgba(56, 189, 248, 0.4); }
+
+        .admin-tabs { display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; position: relative; z-index: 10; }
+        .tab-btn { background: rgba(30, 41, 59, 0.8); border: 1px solid #475569; color: #fff; padding: 10px 25px; border-radius: 12px; font-family: 'Orbitron', sans-serif; font-weight: 600; text-decoration: none; transition: 0.3s; }
+        .tab-btn.active, .tab-btn:hover { background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%); border-color: #38bdf8; color: #fff; box-shadow: 0 0 20px rgba(0, 114, 255, 0.6); }
+
+        .cyber-card { background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 20px; backdrop-filter: blur(15px); position: relative; z-index: 10; padding: 25px; margin-bottom: 25px; box-shadow: 0 0 30px rgba(14, 165, 233, 0.15); transition: 0.3s; }
+        .stat-card { background: rgba(30, 41, 59, 0.6); border: 1px solid #334155; border-radius: 15px; padding: 20px; text-align: center; }
+        .stat-card h6 { color: #ffffff !important; font-family: 'Orbitron', sans-serif; font-size: 0.8rem; text-shadow: 0 0 5px rgba(56, 189, 248, 0.5); }
+
+        .form-control, .form-select { background-color: rgba(30, 41, 59, 0.9) !important; border: 1px solid #475569 !important; color: #ffffff !important; border-radius: 10px; padding: 10px 14px; }
+        .form-control:focus, .form-select:focus { border-color: #38bdf8 !important; box-shadow: 0 0 15px rgba(56, 189, 248, 0.5) !important; color: #ffffff !important; }
+        .form-control::placeholder { color: #94a3b8 !important; opacity: 1; }
+        .form-label { color: #38bdf8 !important; font-weight: 500; font-family: 'Orbitron', sans-serif; font-size: 0.9rem; }
+
+        /* ปรับแต่งช่องกรอกข้อมูลของ Admin ในตารางให้สว่างและชัดเจน */
+        .admin-input {
+            background-color: #1e293b !important;
+            border: 1px solid #38bdf8 !important;
+            color: #ffffff !important;
+            font-weight: 600;
+        }
+        .admin-input::placeholder {
+            color: #cbd5e1 !important;
+        }
+
+        .btn-neon { background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%); border: none; color: white; font-weight: 600; padding: 10px 15px; border-radius: 10px; font-family: 'Orbitron', sans-serif; transition: 0.3s; letter-spacing: 1px; }
+        .btn-neon:hover { background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%); color: white; box-shadow: 0 0 20px rgba(0, 242, 254, 0.8); }
+
+        .filter-btn { background: rgba(30, 41, 59, 0.8); border: 1px solid #475569; color: #fff; border-radius: 8px; padding: 6px 14px; font-size: 0.85rem; }
+        .filter-btn:hover, .filter-btn.active { background: rgba(56, 189, 248, 0.2); border-color: #38bdf8; color: #38bdf8; }
+
+        .table { color: #ffffff !important; border-color: #334155; }
+        .table th { background-color: rgba(30, 41, 59, 0.9); color: #38bdf8; font-family: 'Orbitron', sans-serif; }
+        .table td { background-color: rgba(15, 23, 42, 0.6); color: #ffffff !important; border-color: #334155; vertical-align: middle; }
+        .thumb-img { width: 50px; height: 50px; object-fit: cover; border-radius: 10px; border: 1px solid #38bdf8; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="night"><div class="shooting-star"></div></div>
+
+    <nav class="navbar navbar-dark px-4 py-3">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fa-solid {% if is_admin %}fa-user-shield{% else %}fa-screwdriver-wrench{% endif %} me-2"></i>
+                {% if is_admin %}ADMIN CONTROL CENTER{% else %}EQUIPMENT REPAIR PORTAL{% endif %}
+            </a>
+            <div class="d-flex gap-2">
+                {% if is_admin %}
+                <a href="/network" class="btn-back"><i class="fa-solid fa-globe me-2"></i> มอนิเตอร์เครือข่าย</a>
+                {% endif %}
+                <a href="/dashboard" class="btn-back">
+                    <i class="fa-solid fa-arrow-left me-2"></i> หน้าหลัก
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-5">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold text-white mb-2" style="font-family: 'Orbitron', sans-serif; text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);">
+                {% if is_admin %}ระบบควบคุมส่วนกลาง (Admin Management Grid)}{% else %}ระบบแจ้งซ่อมครุภัณฑ์ภายในวิทยาลัย{% endif %}
+            </h2>
+            <p class="text-white">{% if is_admin %}ตรวจสอบ บันทึกค่าใช้จ่าย และจัดการสถานะอุปกรณ์{% else %}ติดตามสถานะและตรวจสอบค่าใช้จ่ายในการซ่อมบำรุง{% endif %}</p>
+        </div>
+
+        {% if is_admin %}
+        <div class="row g-3 mb-4">
+            <div class="col-md-3"><div class="stat-card"><h6 class="text-uppercase mb-1">Total Requests</h6><h3 class="text-white fw-bold mb-0">{{ total_cases }}</h3></div></div>
+            <div class="col-md-3"><div class="stat-card"><h6 class="text-uppercase mb-1">Pending</h6><h3 class="text-warning fw-bold mb-0">{{ pending_cases }}</h3></div></div>
+            <div class="col-md-3"><div class="stat-card"><h6 class="text-uppercase mb-1">Completed</h6><h3 class="text-success fw-bold mb-0">{{ completed_cases }}</h3></div></div>
+            <div class="col-md-3"><div class="stat-card"><h6 class="text-uppercase mb-1">Total Budget Used</h6><h3 class="text-info fw-bold mb-0">{{ "{:,.2f}".format(total_cost) }} ฿</h3></div></div>
+        </div>
+        {% endif %}
+
+        <div class="row g-4 justify-content-center">
+            {% if not is_admin %}
+            <div class="col-lg-4">
+                <div class="cyber-card">
+                    <h4 class="text-white mb-4" style="font-family: 'Orbitron', sans-serif;">
+                        <i class="fa-solid fa-laptop-code me-2 text-info" id="formIcon"></i>ฟอร์มแจ้งซ่อม
+                    </h4>
+                    <form action="/repair" method="POST" enctype="multipart/form-data" onsubmit="submitSuccess(event)">
+                        <div class="mb-3">
+                            <label class="form-label">ประเภทอุปกรณ์</label>
+                            <select class="form-select" name="category" id="categorySelect" onchange="updateFormIcon()" required>
+                                <option value="คอมพิวเตอร์">💻 คอมพิวเตอร์ / โน้ตบุ๊ก</option>
+                                <option value="ปริ้นเตอร์">🖨️ เครื่องพิมพ์ (Printer)</option>
+                                <option value="เน็ตเวิร์ก">🌐 อุปกรณ์เน็ตเวิร์ก</option>
+                                <option value="โปรเจคเตอร์">📽️ โปรเจคเตอร์</option>
+                                <option value="อื่นๆ">⚡ อื่นๆ</option>
+                            </select>
+                        </div>
+                        <div class="mb-3"><label class="form-label">ชื่อครุภัณฑ์ / รุ่น</label><input type="text" class="form-control" name="equipment" required placeholder="เช่น Dell OptiPlex"></div>
+                        <div class="mb-3"><label class="form-label">สถานที่ / ห้องใช้งาน</label><input type="text" class="form-control" name="location" required placeholder="เช่น ห้อง 432 ตึก 4"></div>
+                        <div class="mb-3"><label class="form-label">อาการชำรุด</label><textarea class="form-control" name="problem" rows="3" required placeholder="ระบุอาการเสีย..."></textarea></div>
+                        <div class="mb-3"><label class="form-label">แนบรูปถ่าย (ถ้ามี)</label><input type="file" class="form-control" name="image" accept="image/*"></div>
+                        <div class="mb-3"><label class="form-label">ผู้แจ้งซ่อม</label><input type="text" class="form-control" name="reporter" required placeholder="ชื่อ-นามสกุล"></div>
+                        <button type="submit" class="btn btn-neon w-100 py-2">ยืนยันการแจ้งซ่อม</button>
+                    </form>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="{% if is_admin %}col-lg-12{% else %}col-lg-8{% endif %}">
+                <div class="cyber-card">
+                    <div class="row align-items-center mb-3 g-3">
+                        <div class="col-md-4"><h4 class="text-white mb-0" style="font-family: 'Orbitron', sans-serif; font-size: 1.1rem;"><i class="fa-solid fa-list-check me-2 text-info"></i>รายการแจ้งซ่อม</h4></div>
+                        <div class="col-md-4 text-center">
+                            <div class="btn-group flex-wrap" role="group">
+                                <button type="button" class="filter-btn active" onclick="filterCategory('all')">ทั้งหมด</button>
+                                <button type="button" class="filter-btn" onclick="filterCategory('คอมพิวเตอร์')">คอมฯ</button>
+                                <button type="button" class="filter-btn" onclick="filterCategory('ปริ้นเตอร์')">ปริ้นเตอร์</button>
+                                <button type="button" class="filter-btn" onclick="filterCategory('เน็ตเวิร์ก')">เน็ตเวิร์ก</button>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-info"><i class="fa-solid fa-search"></i></span>
+                                <input type="text" id="searchInput" class="form-control" placeholder="ค้นหาข้อมูล...">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle" id="repairTable">
+                            <thead>
+                                <tr>
+                                    <th>รหัส</th>
+                                    <th>รูป</th>
+                                    <th>หมวดหมู่</th>
+                                    <th>ครุภัณฑ์ / สถานที่</th>
+                                    <th>อาการเสีย</th>
+                                    <th>ผู้แจ้ง</th>
+                                    <th>สถานะ & ค่าใช้จ่าย</th>
+                                    {% if is_admin %}
+                                    <th>จัดการ & บันทึกราคา</th>
+                                    {% endif %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for row in reports %}
+                                <tr data-category="{{ row['category'] }}">
+                                    <td>#{{ row['id'] }}</td>
+                                    <td>
+                                        {% if row['image'] %}
+                                        <img src="{{ url_for('static', filename='uploads/' + row['image']) }}" class="thumb-img" onclick="openImage(this.src)">
+                                        {% else %}
+                                        <span class="text-muted small">ไม่มี</span>
+                                        {% endif %}
+                                    </td>
+                                    <td><span class="badge bg-secondary">{{ row['category'] }}</span></td>
+                                    <td>
+                                        <div class="fw-bold text-info">{{ row['equipment'] }}</div>
+                                        <small class="text-white"><i class="fa-solid fa-location-dot me-1"></i>{{ row['location'] }}</small>
+                                    </td>
+                                    <td>{{ row['problem'] }}</td>
+                                    <td>{{ row['reporter'] }}</td>
+                                    <td>
+                                        {% if row['status'] == 'รอดำเนินการ' %}<span class="badge bg-warning text-dark status-badge">รอดำเนินการ</span>
+                                        {% elif row['status'] == 'กำลังดำเนินการ' %}<span class="badge bg-info text-dark status-badge">กำลังดำเนินการ</span>
+                                        {% elif row['status'] == 'รออะไหล่' %}<span class="badge bg-secondary text-white status-badge">รออะไหล่</span>
+                                        {% elif row['status'] == 'ยกเลิกคำขอ' %}<span class="badge bg-danger text-white status-badge">ยกเลิกคำขอ</span>
+                                        {% else %}<span class="badge bg-success status-badge">ซ่อมเสร็จสิ้น</span>{% endif %}
+
+                                        <div class="mt-1 text-success fw-bold cost-value">
+                                            <i class="fa-solid fa-tag me-1"></i> ค่าใช้จ่าย: {{ "{:,.2f}".format(row['repair_cost'] if row['repair_cost'] is not none else 0.0) }} ฿
+                                        </div>
+                                        
+                                        {% if row['admin_note'] %}
+                                        <div class="mt-1 text-warning small" style="background: rgba(234, 179, 8, 0.1); padding: 4px 6px; border-radius: 4px;">
+                                            <i class="fa-solid fa-bullhorn me-1"></i> {{ row['admin_note'] }}
+                                        </div>
+                                        {% endif %}
+                                    </td>
+                                    {% if is_admin %}
+                                    <td>
+                                        <form action="/update_repair/{{ row['id'] }}" method="POST" class="d-flex flex-column gap-2" onsubmit="adminUpdateSuccess(event, this)">
+                                            <select name="status" class="form-select form-select-sm admin-input">
+                                                <option value="รอดำเนินการ" {% if row['status'] == 'รอดำเนินการ' %}selected{% endif %}>รอดำเนินการ</option>
+                                                <option value="กำลังดำเนินการ" {% if row['status'] == 'กำลังดำเนินการ' %}selected{% endif %}>กำลังดำเนินการ</option>
+                                                <option value="รออะไหล่" {% if row['status'] == 'รออะไหล่' %}selected{% endif %}>รออะไหล่</option>
+                                                <option value="ซ่อมเสร็จสิ้น" {% if row['status'] == 'ซ่อมเสร็จสิ้น' %}selected{% endif %}>ซ่อมเสร็จสิ้น</option>
+                                                <option value="ยกเลิกคำขอ" {% if row['status'] == 'ยกเลิกคำขอ' %}selected{% endif %}>ยกเลิกคำขอ</option>
+                                            </select>
+                                            <input type="number" step="0.01" name="repair_cost" class="form-control form-control-sm admin-input" placeholder="ระบุค่าใช้จ่าย" value="{{ row['repair_cost'] }}">
+                                            <input type="text" name="admin_note" class="form-control form-control-sm admin-input" placeholder="ระบุสถานที่รับของ..." value="{{ row['admin_note'] }}">
+                                            <button type="submit" class="btn btn-sm btn-neon py-1">บันทึก</button>
+                                        </form>
+                                    </td>
+                                    {% endif %}
+                                </tr>
+                                {% else %}
+                                <tr><td colspan="{% if is_admin %}8{% else %}7{% endif %}" class="text-center text-muted py-4">ยังไม่มีรายการแจ้งซ่อมในระบบ</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateFormIcon() {
+            const cat = document.getElementById("categorySelect").value;
+            const icon = document.getElementById("formIcon");
+            if(cat === 'คอมพิวเตอร์') icon.className = "fa-solid fa-laptop-code me-2 text-info";
+            else if(cat === 'ปริ้นเตอร์') icon.className = "fa-solid fa-print me-2 text-warning";
+            else if(cat === 'เน็ตเวิร์ก') icon.className = "fa-solid fa-globe me-2 text-success";
+            else icon.className = "fa-solid fa-bolt me-2 text-primary";
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const searchInput = document.getElementById("searchInput");
+            const rows = document.querySelectorAll("#repairTable tbody tr");
+            if(searchInput) {
+                searchInput.addEventListener("keyup", function() {
+                    const filter = searchInput.value.toLowerCase();
+                    rows.forEach(row => {
+                        const text = row.textContent.toLowerCase();
+                        row.style.display = text.includes(filter) ? "" : "none";
+                    });
+                });
+            }
+        });
+
+        function filterCategory(cat) {
+            const rows = document.querySelectorAll("#repairTable tbody tr");
+            const buttons = document.querySelectorAll(".filter-btn");
+            buttons.forEach(btn => btn.classList.remove("active"));
+            event.target.classList.add("active");
+            rows.forEach(row => {
+                const rowCat = row.getAttribute("data-category");
+                row.style.display = (cat === 'all' || rowCat === cat) ? "" : "none";
+            });
+        }
+
+        function openImage(src) {
+            Swal.fire({ imageUrl: src, imageWidth: '100%', background: '#030712', showConfirmButton: false });
+        }
+
+        function submitSuccess(event) {
+            event.preventDefault();
+            Swal.fire({ icon: 'success', title: 'ส่งแจ้งซ่อมสำเร็จ!', background: '#0f172a', color: '#fff', confirmButtonColor: '#38bdf8' }).then(() => { event.target.submit(); });
+        }
+
+        function adminUpdateSuccess(event, form) {
+            event.preventDefault();
+            Swal.fire({ title: 'ยืนยันการบันทึก?', text: "ระบบจะบันทึกสถานะและค่าใช้จ่ายใหม่ทันที", icon: 'question', showCancelButton: true, background: '#0f172a', color: '#fff', confirmButtonColor: '#38bdf8', cancelButtonColor: '#d33' }).then((result) => {
+                if (result.isConfirmed) { form.submit(); }
+            });
+        }
+    </script>
+</body>
+</html>
