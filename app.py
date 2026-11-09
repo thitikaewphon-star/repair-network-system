@@ -53,13 +53,13 @@ def login():
         username = request.form.get('username', '').strip()
         password = request.form.get('password', '').strip()
         
-        # เช็กสิทธิ์แอดมิน
-        if username == 'admin' and password == '1234':
+        # เช็กสิทธิ์แอดมิน (ตัดช่องว่างและไม่สนตัวพิมพ์เล็ก-ใหญ่)
+        if username.lower() == 'admin' and password == '1234':
             session['user'] = 'admin'
             session['role'] = 'admin'
             return redirect(url_for('dashboard'))
         
-        # ผู้ใช้ทั่วไป
+        # ผู้ใช้ทั่วไป (ใส่ชื่อและรหัสอะไรก็ได้)
         elif username and password:
             session['user'] = username
             session['role'] = 'user'
