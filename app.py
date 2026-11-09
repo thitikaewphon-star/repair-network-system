@@ -51,13 +51,13 @@ def login():
         username = request.form.get('username')
         password = request.form.get('password')
         
-        # 1. เช็กสิทธิ์แอดมินก่อนเป็นอันดับแรกสุด
-        if username == 'admin' and password == 'admin':
+        # 1. เช็กสิทธิ์แอดมิน (แก้รหัสผ่านเป็น 1234 ตรงนี้แล้วครับ)
+        if username == 'admin' and password == '1234':
             session['user'] = 'admin'
             session['role'] = 'admin'
             return redirect(url_for('dashboard'))
         
-        # 2. ถ้าไม่ใช่แอดมิน แต่มีการกรอกข้อมูลมา ให้เป็น User ทั่วไป (พิมพ์อะไรก็ได้)
+        # 2. ถ้าไม่ใช่แอดมิน แต่มีการกรอกข้อมูลมา ให้เป็น User ทั่วไป (ใส่อะไรก็ได้)
         elif username and password:
             session['user'] = username
             session['role'] = 'user'
