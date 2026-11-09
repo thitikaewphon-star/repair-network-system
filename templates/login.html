@@ -172,7 +172,8 @@
                 <label class="form-label">PASSWORD</label>
                 <div class="input-group">
                     <span class="input-group-text bg-dark border-secondary text-info"><i class="fa-solid fa-key"></i></span>
-                    <input type="password" name="password" class="form-control" placeholder="รหัสผ่านอะไรก็ได้..." autocomplete="off">
+                    <!-- เพิ่ม name="password" ตรงนี้เพื่อให้ส่งรหัสผ่านไปตรวจสอบได้ถูกต้อง -->
+                    <input type="password" name="password" class="form-control" required placeholder="รหัสผ่าน..." autocomplete="off">
                 </div>
             </div>
             <button type="submit" class="btn btn-cyber w-100 py-2">
