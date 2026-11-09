@@ -11,10 +11,9 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row
     return conn
 
-# ฟังก์ชันสร้างตารางเริ่มต้นอัตโนมัติ (ป้องกันปัญหาหาตารางไม่เจอ)
+# ฟังก์ชันสร้างตารางเริ่มต้นอัตโนมัติ
 def init_db():
     conn = get_db_connection()
-    # สร้างตาราง users ถ้ายังไม่มี
     conn.execute('''
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -22,7 +21,6 @@ def init_db():
             password TEXT NOT NULL
         )
     ''')
-    # สร้างตาราง devices (สำหรับหน้า dashboard) ถ้ายังไม่มี
     conn.execute('''
         CREATE TABLE IF NOT EXISTS devices (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -30,7 +28,6 @@ def init_db():
             status TEXT
         )
     ''')
-    # สร้างตาราง repairs (สำหรับหน้าแจ้งซ่อม) ถ้ายังไม่มี
     conn.execute('''
         CREATE TABLE IF NOT EXISTS repairs (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -42,7 +39,6 @@ def init_db():
     conn.commit()
     conn.close()
 
-# รันสร้างฐานข้อมูลเมื่อแอปเริ่มทำงาน
 init_db()
 
 @app.route('/')
@@ -55,24 +51,19 @@ def login():
         username = request.form.get('username')
         password = request.form.get('password')
         
-        try:
-            conn = get_db_connection()
-            user = conn.execute('SELECT * FROM users WHERE username = ? AND password = ?', (username, password)).fetchone()
-            conn.close()
-            
-            # อนุญาตให้ล็อกอินผ่านด้วย admin/admin หรือถ้ามีในฐานข้อมูล
-            if (username == 'admin' and password == 'admin') or user:
-                session['user'] = username
-                return redirect(url_for('dashboard'))
-            else:
-                return render_template('login.html', error='ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง')
-        except Exception as e:
-            print("Login Error:", e)
-            # กรณีฐานข้อมูลยังไม่พร้อม ให้เข้าผ่าน admin ได้ทันทีเพื่อความเสถียร
-            if username == 'admin' and password == 'admin':
-                session['user'] = username
-                return redirect(url_for('dashboard'))
-            return render_template('login.html', error='เกิดข้อผิดพลาดในระบบฐานข้อมูล')
+        # เงื่อนไขที่ 1: ถ้าเป็นแอดมิน (admin / admin) แยกสิทธิ์ไปหน้าแอดมินหรือแดชบอร์ดแอดมิน
+        if username == 'admin' and password == 'admin':
+            session['user'] = 'admin'
+            session['role'] = 'admin'
+            return redirect(url_for('dashboard'))
+        
+        # เงื่อนไขที่ 2: ผู้ใช้ทั่วไป พิมพ์อะไรก็ได้ (ที่ไม่ว่างเปล่า) ยอมให้เข้าสู่ระบบทั้งหมด
+        elif username and password:
+            session['user'] = username
+            session['role'] = 'user'
+            return redirect(url_for('dashboard'))
+        else:
+            return render_template('login.html', error='กรุณากรอกชื่อผู้ใช้และรหัสผ่าน')
             
     return render_template('login.html')
 
@@ -88,7 +79,8 @@ def dashboard():
     except Exception:
         devices = []
         
-    return render_template('dashboard.html', devices=devices)
+    # ส่งตัวแปร role ไปเช็กหน้าเว็บได้ว่าใครคือ admin ใครคือ user ทั่วไป
+    return render_template('dashboard.html', devices=devices, role=session.get('role'))
 
 @app.route('/repair', methods=['GET', 'POST'])
 def repair():
@@ -114,7 +106,7 @@ def repair():
 
 @app.route('/logout')
 def logout():
-    session.pop('user', None)
+    session.clear()
     return redirect(url_for('login'))
 
 if __name__ == '__main__':
