@@ -5,13 +5,11 @@ import sqlite3
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
 
-# ฟังก์ชันเชื่อมต่อฐานข้อมูล
 def get_db_connection():
     conn = sqlite3.connect('database.db')
     conn.row_factory = sqlite3.Row
     return conn
 
-# ฟังก์ชันสร้างตารางเริ่มต้นอัตโนมัติ
 def init_db():
     conn = get_db_connection()
     conn.execute('''
@@ -47,17 +45,20 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    # เคลียร์ session เก่าทิ้งทันทีที่เข้ามาหน้า login เพื่อป้องกันสิทธิ์ค้าง
+    session.clear()
+    
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
         
-        # 1. เช็กสิทธิ์แอดมิน (แก้รหัสผ่านเป็น 1234 ตรงนี้แล้วครับ)
+        # เช็กสิทธิ์แอดมิน (admin / 1234)
         if username == 'admin' and password == '1234':
             session['user'] = 'admin'
             session['role'] = 'admin'
             return redirect(url_for('dashboard'))
         
-        # 2. ถ้าไม่ใช่แอดมิน แต่มีการกรอกข้อมูลมา ให้เป็น User ทั่วไป (ใส่อะไรก็ได้)
+        # ผู้ใช้ทั่วไป ใส่ชื่อและรหัสอะไรก็ได้
         elif username and password:
             session['user'] = username
             session['role'] = 'user'
